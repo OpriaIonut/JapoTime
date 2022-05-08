@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.example.japotimeapp.fragments.MainPageFragment;
+import com.example.japotimeapp.utils.KanjiCard;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String inputUrl = "https://japotime.fra1.digitaloceanspaces.com/Yomichan.txt";
 
+    private List<KanjiCard> cardsCollection = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -31,12 +34,13 @@ public class MainActivity extends AppCompatActivity {
         new FetchData().start();
     }
 
-    public static void onConfigFileLoaded(List<String> result)
+    public void onConfigFileLoaded(List<String> result)
     {
         for(int index = 0; index < result.size(); index++)
         {
-            System.out.println(result.get(index));
+            cardsCollection.add(new KanjiCard(result.get(index)));
         }
+        System.out.println("Found: " + cardsCollection.size() + " cards.");
     }
 
     public class FetchData extends Thread
