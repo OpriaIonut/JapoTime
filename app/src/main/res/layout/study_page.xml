@@ -81,7 +81,7 @@
         app:layout_constraintTop_toBottomOf="@+id/studyPageBackBtn">
 
         <TextView
-            android:id="@+id/studyPageFrontCard"
+            android:id="@+id/studyPageFrontKanji"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
@@ -107,7 +107,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/studyPageFrontCard" />
+            app:layout_constraintTop_toBottomOf="@+id/studyPageFrontKanji" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -123,7 +123,7 @@
         app:layout_constraintTop_toBottomOf="@+id/studyPageBackBtn">
 
         <TextView
-            android:id="@+id/studyPageBackCard"
+            android:id="@+id/studyPageBackKanji"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
@@ -164,7 +164,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/studyPageBackCard" />
+            app:layout_constraintTop_toBottomOf="@+id/studyPageBackKanji" />
 
         <View
             android:id="@+id/divider"
