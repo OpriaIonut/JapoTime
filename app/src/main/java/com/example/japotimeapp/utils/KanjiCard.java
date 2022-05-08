@@ -5,16 +5,18 @@ import java.util.List;
 
 public class KanjiCard
 {
-    private String kanji;
-    private String sentence;
-    private String reading;
-    private List<String> meanings = new ArrayList<>();
+    public String kanji;
+    public String sentence;
+    public String reading;
+    public List<String> meanings = new ArrayList<>();
 
     public KanjiCard(String cardInput)
     {
         ExtractDefinitions(cardInput);
     }
 
+
+    //Remove html unicode characters using this website: https://www.textfixer.com/html/html-character-encoding.php
     public void ExtractDefinitions(String cardInput)
     {
         String parsedInput = cardInput;
@@ -78,7 +80,7 @@ public class KanjiCard
             {
                 //Between ruby tags, there can be katakana/hiragana, so add empty spaces for those
                 for(int index = 0; index < nextRuby; index++)
-                    reading += " ";
+                    reading += readingText.charAt(index);
 
                 //Find the reading between rt tags
                 int nextRT = readingText.indexOf("<rt>") + 4;
@@ -92,7 +94,7 @@ public class KanjiCard
             }
             //Some hiragana/katakana may be after the last ruby tag, so put empty spaces for those
             for(int index = 0; index < readingText.length(); index++)
-                reading += " ";
+                reading += readingText.charAt(index);
         }
     }
 

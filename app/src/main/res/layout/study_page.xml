@@ -66,130 +66,138 @@
         android:layout_marginTop="24dp"
         android:backgroundTint="@color/normalBtn"
         android:text="BACK"
+        android:textColor="@color/normalText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/studyPageFront"
+        android:id="@+id/constraintLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="75dp"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/studyPageBackBtn">
 
-        <TextView
-            android:id="@+id/studyPageFrontKanji"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginEnd="50dp"
-            android:text="質問"
-            android:textColor="@color/normalText"
-            android:textSize="34sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/studyPageFrontSentence"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="50dp"
-            android:text="逆側、アスタの様子を観察するかのように、じっと (見つめる) 少女が抑揚のない声で告げた。"
-            android:textColor="@color/normalText"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/studyPageFrontKanji" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/studyPageBack"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="75dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/studyPageBackBtn">
-
-        <TextView
-            android:id="@+id/studyPageBackKanji"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="50dp"
-            android:text="質問"
-            android:textColor="@color/normalText"
-            android:textSize="34sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/studyPageBackReading" />
-
-        <TextView
-            android:id="@+id/studyPageBackReading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginEnd="50dp"
-            android:text="質問"
-            android:textColor="@color/normalText"
-            android:textSize="28sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/studyPageBackSentence"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="50dp"
-            android:text="逆側、アスタの様子を観察するかのように、じっと (見つめる) 少女が抑揚のない声で告げた。"
-            android:textColor="@color/normalText"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/studyPageBackKanji" />
-
-        <View
-            android:id="@+id/divider"
-            android:layout_width="0dp"
-            android:layout_height="3dp"
-            android:layout_marginTop="25dp"
-            android:background="?android:attr/listDivider"
-            android:backgroundTint="@color/normalText"
-            android:foreground="@color/normalText"
-            android:foregroundTint="@color/normalText"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/studyPageBackSentence" />
-
-        <ListView
-            android:id="@+id/studyPageBackMeaning"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/studyPageFront"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="50dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/divider" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/studyPageFrontKanji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginEnd="50dp"
+                android:text="質問"
+                android:textColor="@color/normalText"
+                android:textSize="34sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/studyPageFrontSentence"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginEnd="25dp"
+                android:text="逆側、アスタの様子を観察するかのように、じっと (見つめる) 少女が抑揚のない声で告げた。"
+                android:textColor="@color/normalText"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/studyPageFrontKanji" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/studyPageBack"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/studyPageBackKanji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginEnd="50dp"
+                android:text="質問"
+                android:textColor="@color/normalText"
+                android:textSize="34sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.497"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/studyPageBackReading" />
+
+            <TextView
+                android:id="@+id/studyPageBackReading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginEnd="50dp"
+                android:text="質問"
+                android:textColor="@color/normalText"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.497"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/studyPageBackSentence"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginEnd="25dp"
+                android:text="逆側、アスタの様子を観察するかのように、じっと (見つめる) 少女が抑揚のない声で告げた。"
+                android:textColor="@color/normalText"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/studyPageBackKanji" />
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="0dp"
+                android:layout_height="3dp"
+                android:layout_marginTop="25dp"
+                android:background="?android:attr/listDivider"
+                android:backgroundTint="@color/normalText"
+                android:foreground="@color/normalText"
+                android:foregroundTint="@color/normalText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/studyPageBackSentence" />
+
+            <ListView
+                android:id="@+id/studyPageBackMeaning"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -198,14 +206,13 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="25dp"
-        android:layout_marginTop="10dp"
         android:layout_marginEnd="25dp"
         android:layout_marginBottom="10dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/studyPageBack">
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
 
         <Button
             android:id="@+id/studyPageAgainBtn"
@@ -216,6 +223,7 @@
             android:layout_weight="1"
             android:backgroundTint="@color/answerBtnAgain"
             android:text="Again"
+            android:textColor="@color/normalText"
             android:textSize="14sp"
             android:visibility="gone" />
 
@@ -228,6 +236,7 @@
             android:layout_weight="1"
             android:backgroundTint="@color/answerBtnHard"
             android:text="Hard"
+            android:textColor="@color/normalText"
             android:textSize="14sp"
             android:visibility="gone" />
 
@@ -240,6 +249,7 @@
             android:layout_weight="1"
             android:backgroundTint="@color/answerBtnGood"
             android:text="Good"
+            android:textColor="@color/normalText"
             android:textSize="14sp"
             android:visibility="gone" />
 
@@ -252,6 +262,7 @@
             android:layout_weight="1"
             android:backgroundTint="@color/answerBtnEasy"
             android:text="Easy"
+            android:textColor="@color/normalText"
             android:textSize="14sp"
             android:visibility="gone" />
 
@@ -264,6 +275,7 @@
             android:layout_weight="1"
             android:backgroundTint="@color/answerBtnHard"
             android:text="Learn"
+            android:textColor="@color/normalText"
             android:textSize="14sp"
             android:visibility="gone" />
 
@@ -276,6 +288,7 @@
             android:layout_weight="1"
             android:backgroundTint="@color/answerBtnEasy"
             android:text="Skip"
+            android:textColor="@color/normalText"
             android:textSize="14sp"
             android:visibility="gone" />
 
@@ -288,6 +301,7 @@
             android:layout_weight="1"
             android:backgroundTint="@color/normalBtn"
             android:text="SHOW ANSWER"
+            android:textColor="@color/normalText"
             android:textSize="14sp"
             android:visibility="gone" />
     </LinearLayout>

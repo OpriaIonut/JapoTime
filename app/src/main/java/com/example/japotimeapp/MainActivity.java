@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String inputUrl = "https://japotime.fra1.digitaloceanspaces.com/Yomichan.txt";
 
-    private List<KanjiCard> cardsCollection = new ArrayList<>();
+    public List<KanjiCard> cardsCollection = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)

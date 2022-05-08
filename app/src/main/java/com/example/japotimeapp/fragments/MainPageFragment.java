@@ -36,7 +36,7 @@ public class MainPageFragment extends Fragment
         studyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mainPage, new StudyPageFragment(mainActivity)).commit();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new StudyPageFragment(mainActivity)).commit();
             }
         });
     }
