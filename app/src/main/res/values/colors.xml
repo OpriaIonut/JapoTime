@@ -14,5 +14,10 @@
     <color name="cardRefresh">#50D34A</color>
     <color name="cardReview">#DC4040</color>
     <color name="cardLastCheck">#DC8E3B</color>
+
     <color name="normalBtn">#465159</color>
+    <color name="answerBtnAgain">#BC2727</color>
+    <color name="answerBtnHard">#505C5B</color>
+    <color name="answerBtnGood">#299825</color>
+    <color name="answerBtnEasy">#326097</color>
 </resources>
