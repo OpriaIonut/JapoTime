@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import com.example.japotimeapp.fragments.LoadingScreenFragment;
 import com.example.japotimeapp.fragments.MainPageFragment;
 import com.example.japotimeapp.utils.KanjiCard;
 
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainer, new MainPageFragment(this)).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainer, new LoadingScreenFragment(this)).commit();
         new FetchData().start();
     }
 
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
             cardsCollection.add(new KanjiCard(result.get(index)));
         }
         System.out.println("Found: " + cardsCollection.size() + " cards.");
+        getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainer, new MainPageFragment(this)).commit();
     }
 
     public class FetchData extends Thread
