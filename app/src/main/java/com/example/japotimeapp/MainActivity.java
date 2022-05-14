@@ -7,7 +7,9 @@ import android.os.Bundle;
 
 import com.example.japotimeapp.fragments.LoadingScreenFragment;
 import com.example.japotimeapp.fragments.MainPageFragment;
+import com.example.japotimeapp.utils.DataSaver;
 import com.example.japotimeapp.utils.KanjiCard;
+import com.example.japotimeapp.utils.KanjiCollection;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,7 +25,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String inputUrl = "https://japotime.fra1.digitaloceanspaces.com/Yomichan.txt";
 
-    public List<KanjiCard> cardsCollection = new ArrayList<>();
+    public KanjiCollection kanjiCollection = null;
+    public DataSaver dataSaver = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -37,11 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void onConfigFileLoaded(List<String> result)
     {
-        for(int index = 0; index < result.size(); index++)
-        {
-            cardsCollection.add(new KanjiCard(result.get(index)));
-        }
-        System.out.println("Found: " + cardsCollection.size() + " cards.");
+        dataSaver = new DataSaver(getSharedPreferences("shared preferences", MODE_PRIVATE), this);
+        kanjiCollection = new KanjiCollection(result, dataSaver);
+
         getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainer, new MainPageFragment(this)).commit();
     }
 

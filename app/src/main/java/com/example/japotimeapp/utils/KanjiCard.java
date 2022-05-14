@@ -1,6 +1,7 @@
 package com.example.japotimeapp.utils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class KanjiCard
@@ -8,11 +9,25 @@ public class KanjiCard
     public String kanji;
     public String sentence;
     public String reading;
-    public List<String> meanings = new ArrayList<>();
+    public List<String> meanings;
 
-    public KanjiCard(String cardInput)
+    public Date lastReviewDate;
+    public int nextReviewDays;
+    public int masterScore;
+
+    public KanjiCard()
     {
-        ExtractDefinitions(cardInput);
+        kanji = "";
+        sentence = "";
+        meanings = new ArrayList<>();
+        lastReviewDate = null;
+        nextReviewDays = 0;
+        masterScore = 0;
+    }
+
+    public Boolean IsEqual(KanjiCard card)
+    {
+        return this.kanji == card.kanji && this.sentence == card.sentence && this.reading == card.reading;
     }
 
 
