@@ -21,8 +21,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.SimpleFormatter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,12 +35,17 @@ public class MainActivity extends AppCompatActivity {
     public KanjiCollection kanjiCollection = null;
     public DailyReview dailyReview = null;
     public DataSaver dataSaver = null;
+    public String currentDate;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Date date = new Date();
+        currentDate = new SimpleDateFormat("dd-MM-yyyy").format(date);
 
         getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainer, new LoadingScreenFragment(this)).commit();
         new FetchData().start();
@@ -83,5 +92,33 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    //Will be called when the app resumes, or control is given back to this activity (when the popup activities call finish())
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    //When the app pauses or closes, save the data
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dataSaver.SaveData(currentDate, false);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    protected void onStop() {
+        super.onStop();
+        dataSaver.SaveData(currentDate, false);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        dataSaver.SaveData(currentDate, false);
     }
 }

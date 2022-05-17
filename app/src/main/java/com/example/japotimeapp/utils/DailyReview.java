@@ -7,9 +7,12 @@ import androidx.annotation.RequiresApi;
 
 import com.example.japotimeapp.enums.CardAnswer;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -18,17 +21,19 @@ public class DailyReview
     private DataSaver dataSaver;
     private KanjiCollection kanjiCollection;
 
-    private List<Integer> newCardsIDs;
-    private List<Integer> refreshCardsIDs;
-    private List<Integer> inReviewIDs;
-    private List<Integer> lastCheckIDs;
+    public List<Integer> newCardsIDs;
+    public List<Integer> refreshCardsIDs;
+    public List<Integer> inReviewIDs;
+    public List<Integer> lastCheckIDs;
 
-    private int newCardsLimit = 20;
-    private int refreshCardsLimit = 40;
-    private int inReviewLimit = 10;
-    private int newCardsLearningBatch = 5;
+    public int newCardsLimit = 20;
+    public int refreshCardsLimit = 40;
+    public int inReviewLimit = 10;
 
-    private LocalDate currentDate;
+    public int cardsStudiedToday = 0;
+    public String totalSpentTimeStudying = "00:00:00";
+
+    private String currentDate;
     private Random randomGenerator;
 
     private Boolean refreshCardsEmptied = false;
@@ -40,11 +45,42 @@ public class DailyReview
     {
         dataSaver = _dataSaver;
         kanjiCollection = _kanjiCollection;
-        currentDate = java.time.LocalDate.now();
+
+        Date date = new Date();
+        currentDate = new SimpleDateFormat("dd-MM-yyyy").format(date);
         randomGenerator = new Random();
 
-        if(dataSaver.loadedData == null || dataSaver.loadedData.lastOpenDate == null || dataSaver.loadedData.lastOpenDate != currentDate)
+        if(dataSaver.loadedData == null)
         {
+            newCardsIDs = new ArrayList<>();
+            refreshCardsIDs = new ArrayList<>();
+            inReviewIDs = new ArrayList<>();
+            lastCheckIDs = new ArrayList<>();
+        }
+        else
+        {
+            newCardsIDs = dataSaver.loadedData.newCardsIDs;
+            refreshCardsIDs = dataSaver.loadedData.refreshCardsIDs;
+            inReviewIDs = dataSaver.loadedData.inReviewIDs;
+            lastCheckIDs = dataSaver.loadedData.lastCheckIDs;
+
+            refreshCardsLimit = dataSaver.loadedData.refreshCardsLimit;
+            inReviewLimit = dataSaver.loadedData.inReviewLimit;
+            newCardsLimit = dataSaver.loadedData.newCardsLimit;
+
+            if(dataSaver.loadedData.studiedCardsHistory.get(currentDate) != null)
+                cardsStudiedToday = dataSaver.loadedData.studiedCardsHistory.get(currentDate);
+
+            if(dataSaver.loadedData.studiedTimeHistory.get(currentDate) != null)
+                totalSpentTimeStudying = dataSaver.loadedData.studiedTimeHistory.get(currentDate);
+
+            if(refreshCardsIDs.size() == 0)
+                refreshCardsEmptied = true;
+        }
+
+        if(dataSaver.loadedData == null || dataSaver.loadedData.lastOpenDate == null || !dataSaver.loadedData.lastOpenDate.equals(currentDate))
+        {
+            cardsStudiedToday = 0;
             GenerateDayReview();
         }
     }
@@ -55,12 +91,9 @@ public class DailyReview
     public int GetLastCheckCardsCount() { return lastCheckIDs.size(); }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void GenerateDayReview()
+    public void GenerateDayReview()
     {
-        newCardsIDs = new ArrayList<>();
-        refreshCardsIDs = new ArrayList<>();
-        inReviewIDs = new ArrayList<>();
-        lastCheckIDs = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd--MM-yyyy");
 
         //Find the kanji that should be reviewed
         List<Pair<Integer, Integer>> kanjiToReview = new ArrayList<>();
@@ -79,8 +112,10 @@ public class DailyReview
             else
             {
                 //Otherwise, if it has been learned, check if it should be learned now or not
-                LocalDate reviewDate = currentDate.plusDays(currentCard.nextReviewDays);
-                int reviewDayDifference = (int) ChronoUnit.DAYS.between(currentDate, reviewDate);
+                LocalDate dateParser = LocalDate.parse(currentDate, formatter);
+
+                LocalDate reviewDate = dateParser.plusDays(currentCard.nextReviewDays);
+                int reviewDayDifference = (int) ChronoUnit.DAYS.between(dateParser, reviewDate);
                 if(reviewDayDifference <= 0)
                 {
                     kanjiToReview.add(new Pair<>(index, reviewDayDifference));
@@ -102,7 +137,7 @@ public class DailyReview
             }
         }
 
-        int cardsFound = Math.min(refreshCardsLimit, kanjiToReview.size());
+        int cardsFound = Math.min(refreshCardsLimit - refreshCardsIDs.size(), kanjiToReview.size());
         for(int index = 0; index < cardsFound; index++)
         {
             refreshCardsIDs.add(kanjiToReview.get(index).first);
@@ -166,8 +201,6 @@ public class DailyReview
 
     public void ValidateStudyCard(CardAnswer selectedAnswer, KanjiCard currentCard)
     {
-        //Don't forget to set refreshCardsEmptied to true when finishing with refresh set
-
         //Increase card score based on selected answer
         int cardScore = currentCard.masterScore;
         switch (selectedAnswer)
@@ -225,6 +258,7 @@ public class DailyReview
             case "LastCheck":
                 if(currentCard.masterScore >= 10)
                 {
+                    currentCard.nextReviewDays = GetNextReviewDays(currentCard.masterScore);
                     lastCheckIDs.remove(pickedListIndex);
                 }
                 else
@@ -235,5 +269,58 @@ public class DailyReview
                 }
                 break;
         }
+        cardsStudiedToday++;
+    }
+
+    public int GetNextReviewDays(int cardScore)
+    {
+        if(cardScore >= 10 && cardScore <= 30)
+            return (int) ((cardScore - 10) * 1.35 + 3);
+        else
+        {
+            int val = (int)(cardScore - 30) * 3 + 30;
+            if(val > 90)
+                return 90;
+            return val;
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void ResetProgress()
+    {
+        kanjiCollection.ResetAllCards();
+        newCardsIDs = new ArrayList<>();
+        refreshCardsIDs = new ArrayList<>();
+        inReviewIDs = new ArrayList<>();
+        lastCheckIDs = new ArrayList<>();
+
+        cardsStudiedToday = 0;
+        totalSpentTimeStudying = "00:00:00";
+
+        dataSaver.SaveData(currentDate, true);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void RecalculateDayReview()
+    {
+        int diff = newCardsIDs.size() - newCardsLimit;
+        if(diff > 0)
+        {
+            newCardsIDs.subList(newCardsIDs.size() - diff, newCardsIDs.size()).clear();
+        }
+
+        diff = refreshCardsIDs.size() - refreshCardsLimit;
+        if(diff > 0)
+        {
+            refreshCardsIDs.subList(refreshCardsIDs.size() - diff, refreshCardsIDs.size()).clear();
+        }
+
+        diff = inReviewIDs.size() - inReviewLimit;
+        if(diff > 0)
+        {
+            inReviewIDs.subList(inReviewIDs.size() - diff, inReviewIDs.size()).clear();
+        }
+
+        GenerateDayReview();
     }
 }

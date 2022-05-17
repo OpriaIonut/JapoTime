@@ -6,6 +6,7 @@ import java.util.List;
 public class KanjiCollection
 {
     public List<KanjiCard> cardsCollection;
+    private List<String> digitalOceanCards;
 
     public KanjiCollection(List<String> result, DataSaver dataSaver)
     {
@@ -29,6 +30,8 @@ public class KanjiCollection
 
     private void LoadKanjiFromDigitalOcean(List<String> result)
     {
+        digitalOceanCards = result;
+
         for(int index = 0; index < result.size(); index++)
         {
             KanjiCard newCard = new KanjiCard();
@@ -48,5 +51,11 @@ public class KanjiCollection
                 cardsCollection.add(newCard);
             }
         }
+    }
+
+    public void ResetAllCards()
+    {
+        cardsCollection = new ArrayList<>();
+        LoadKanjiFromDigitalOcean(digitalOceanCards);
     }
 }

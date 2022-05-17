@@ -27,7 +27,7 @@ public class KanjiCard
 
     public Boolean IsEqual(KanjiCard card)
     {
-        return this.kanji == card.kanji && this.sentence == card.sentence && this.reading == card.reading;
+        return this.kanji.equals(card.kanji) && this.sentence.equals(card.sentence) && this.reading.equals(card.reading);
     }
 
 

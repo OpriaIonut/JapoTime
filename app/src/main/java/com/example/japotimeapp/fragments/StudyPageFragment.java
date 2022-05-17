@@ -1,6 +1,7 @@
 package com.example.japotimeapp.fragments;
 
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
@@ -19,7 +21,12 @@ import com.example.japotimeapp.R;
 import com.example.japotimeapp.enums.CardAnswer;
 import com.example.japotimeapp.utils.KanjiCard;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class StudyPageFragment extends Fragment
@@ -53,6 +60,7 @@ public class StudyPageFragment extends Fragment
     private ArrayAdapter<String> backMeaningAdapter;
 
     private KanjiCard currentCard;
+    private LocalTime studyStartTime;
 
     public StudyPageFragment(MainActivity _mainActivity)
     {
@@ -66,9 +74,12 @@ public class StudyPageFragment extends Fragment
         return inflater.inflate(R.layout.study_page, container, false);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
+
+        studyStartTime = LocalTime.now();
 
         frontCard = view.findViewById(R.id.studyPageFront);
         backCard =  view.findViewById(R.id.studyPageBack);
@@ -104,8 +115,30 @@ public class StudyPageFragment extends Fragment
 
         Button backBtn = view.findViewById(R.id.studyPageBackBtn);
         backBtn.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View v) {
+
+                LocalTime endTime = LocalTime.now();
+                Duration currentStudySession = Duration.between(studyStartTime, endTime);
+
+                long seconds = 0;
+
+                if(mainActivity.dailyReview.totalSpentTimeStudying.equals("00:00:00"))
+                    seconds = currentStudySession.getSeconds();
+                else
+                {
+                    Duration dayTotal = Duration.between(LocalTime.MIN, LocalTime.parse(mainActivity.dailyReview.totalSpentTimeStudying));
+                    Duration newTotal = dayTotal.plus(currentStudySession);
+                    seconds = newTotal.getSeconds();
+                }
+
+                long HH = seconds / 3600;
+                long MM = (seconds % 3600) / 60;
+                long SS = seconds % 60;
+
+                mainActivity.dailyReview.totalSpentTimeStudying = String.format("%02d:%02d:%02d", HH, MM, SS);
+
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new MainPageFragment(mainActivity)).commit();
             }
         });
