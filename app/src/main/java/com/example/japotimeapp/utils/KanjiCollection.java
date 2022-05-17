@@ -15,7 +15,7 @@ public class KanjiCollection
 
     private void LoadKanjiFromSavedData(DataSaver dataSaver)
     {
-        UserData loadedData = dataSaver.LoadData();
+        UserData loadedData = dataSaver.loadedData;
 
         if(loadedData == null)
         {
@@ -37,7 +37,7 @@ public class KanjiCollection
             Boolean cardExists = false;
             for(int index2 = 0; index2 < cardsCollection.size(); index2++)
             {
-                if(cardsCollection.get(index).IsEqual(newCard))
+                if(cardsCollection.get(index2).IsEqual(newCard))
                 {
                     cardExists = true;
                     break;

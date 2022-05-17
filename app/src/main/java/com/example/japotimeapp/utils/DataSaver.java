@@ -1,6 +1,9 @@
 package com.example.japotimeapp.utils;
 
 import android.content.SharedPreferences;
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
 
 import com.example.japotimeapp.MainActivity;
 import com.google.gson.Gson;
@@ -13,12 +16,15 @@ public class DataSaver
     private SharedPreferences sharedPreferences;
     private MainActivity mainActivity;
 
+    public UserData loadedData;
+
     public DataSaver(SharedPreferences _shared, MainActivity _mainActivity)
     {
         sharedPreferences = _shared;
         mainActivity = _mainActivity;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void SaveData()
     {
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -30,14 +36,12 @@ public class DataSaver
         editor.apply();
     }
 
-    public UserData LoadData()
+    public void LoadData()
     {
         Gson gson = new Gson();
         String json = sharedPreferences.getString("userProgressData", null);
         Type type = new TypeToken<UserData>(){}.getType();
-        UserData userData = gson.fromJson(json, type);
-
-        return userData;
+        loadedData = gson.fromJson(json, type);
     }
 
     public void ClearSharedPrefs(){

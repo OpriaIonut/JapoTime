@@ -21,8 +21,6 @@ import com.example.japotimeapp.utils.KanjiCard;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class StudyPageFragment extends Fragment
 {
@@ -41,6 +39,11 @@ public class StudyPageFragment extends Fragment
 
     private TextView frontKanji;
     private TextView frontSentence;
+
+    private TextView studyPageCardsLastCheck;
+    private TextView studyPageCardsNew;
+    private TextView studyPageCardsReview;
+    private TextView studyPageCardsRefresh;
 
     private TextView backKanji;
     private TextView backSentence;
@@ -86,6 +89,16 @@ public class StudyPageFragment extends Fragment
         backReading =  view.findViewById(R.id.studyPageBackReading);
         backMeaning =  view.findViewById(R.id.studyPageBackMeaning);
 
+        studyPageCardsLastCheck =  view.findViewById(R.id.studyPageCardsLastCheck);
+        studyPageCardsNew =  view.findViewById(R.id.studyPageCardsNew);
+        studyPageCardsReview =  view.findViewById(R.id.studyPageCardsReview);
+        studyPageCardsRefresh =  view.findViewById(R.id.studyPageCardsRefresh);
+
+        studyPageCardsNew.setText("" + mainActivity.dailyReview.GetNewCardsCount());
+        studyPageCardsRefresh.setText("" + mainActivity.dailyReview.GetRefreshCardsCount());
+        studyPageCardsReview.setText("" + mainActivity.dailyReview.GetInReviewCardsCount());
+        studyPageCardsLastCheck.setText("" + mainActivity.dailyReview.GetLastCheckCardsCount());
+
         backMeaningAdapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_list_item_1, backMeaningList);
         backMeaning.setAdapter(backMeaningAdapter);
 
@@ -97,24 +110,42 @@ public class StudyPageFragment extends Fragment
             }
         });
 
-        againBtn.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { parseCardAnswer(CardAnswer.Again); }});
-        hardBtn.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { parseCardAnswer(CardAnswer.Hard); }});
-        goodBtn.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { parseCardAnswer(CardAnswer.Good); }});
-        easyBtn.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { parseCardAnswer(CardAnswer.Easy); }});
-        learnBtn.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { parseCardAnswer(CardAnswer.Learn); }});
-        skipBtn.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { parseCardAnswer(CardAnswer.Skip); }});
+        againBtn.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { ParseCardAnswer(CardAnswer.Again); }});
+        hardBtn.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { ParseCardAnswer(CardAnswer.Hard); }});
+        goodBtn.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { ParseCardAnswer(CardAnswer.Good); }});
+        easyBtn.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { ParseCardAnswer(CardAnswer.Easy); }});
+        learnBtn.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { ParseCardAnswer(CardAnswer.Learn); }});
+        skipBtn.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { ParseCardAnswer(CardAnswer.Skip); }});
 
         showAnswerBtn.setVisibility(View.VISIBLE);
-        showAnswerBtn.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { showCardBack(); }});
+        showAnswerBtn.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { ShowCardBack(); }});
 
-        pickNextCard();
+        PickNextCard();
     }
 
-    public void showCardBack()
+    public void ShowCardBack()
     {
         showAnswerBtn.setVisibility(View.GONE);
-        learnBtn.setVisibility(View.VISIBLE);
-        skipBtn.setVisibility(View.VISIBLE);
+
+        String cardType = mainActivity.dailyReview.GetLastCardType();
+        switch(cardType)
+        {
+            case "Refresh":
+            case "Review":
+                againBtn.setVisibility(View.VISIBLE);
+                hardBtn.setVisibility(View.VISIBLE);
+                goodBtn.setVisibility(View.VISIBLE);
+                easyBtn.setVisibility(View.VISIBLE);
+                break;
+            case "New":
+                learnBtn.setVisibility(View.VISIBLE);
+                skipBtn.setVisibility(View.VISIBLE);
+                break;
+            case "LastCheck":
+                againBtn.setVisibility(View.VISIBLE);
+                easyBtn.setVisibility(View.VISIBLE);
+                break;
+        }
 
         frontCard.setVisibility(View.GONE);
         backCard.setVisibility(View.VISIBLE);
@@ -129,32 +160,31 @@ public class StudyPageFragment extends Fragment
         backMeaningAdapter.notifyDataSetChanged();
     }
 
-    public void parseCardAnswer(CardAnswer selectedAnswer)
+    public void ParseCardAnswer(CardAnswer selectedAnswer)
     {
-        switch (selectedAnswer) {
-            case Again:
-                break;
-            case Hard:
-                break;
-            case Good:
-                break;
-            case Easy:
-                break;
-            case Learn:
-                break;
-            case Skip:
-                break;
-        }
-        pickNextCard();
+        mainActivity.dailyReview.ValidateStudyCard(selectedAnswer, currentCard);
+
+        studyPageCardsNew.setText("" + mainActivity.dailyReview.GetNewCardsCount());
+        studyPageCardsRefresh.setText("" + mainActivity.dailyReview.GetRefreshCardsCount());
+        studyPageCardsReview.setText("" + mainActivity.dailyReview.GetInReviewCardsCount());
+        studyPageCardsLastCheck.setText("" + mainActivity.dailyReview.GetLastCheckCardsCount());
+
+        PickNextCard();
     }
 
-    public void pickNextCard()
+    public void PickNextCard()
     {
         frontCard.setVisibility(View.VISIBLE);
         backCard.setVisibility(View.GONE);
 
-        int randomCard = ThreadLocalRandom.current().nextInt(0, mainActivity.cardsCollection.size());
-        currentCard = mainActivity.cardsCollection.get(randomCard);
+        currentCard = mainActivity.dailyReview.GetNextStudyCard();
+
+        //End of the session
+        if(currentCard == null)
+        {
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new MainPageFragment(mainActivity)).commit();
+            return;
+        }
 
         frontKanji.setText(currentCard.kanji);
         frontSentence.setText(currentCard.sentence);
