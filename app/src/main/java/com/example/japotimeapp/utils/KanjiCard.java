@@ -11,7 +11,7 @@ public class KanjiCard
     public String reading;
     public List<String> meanings;
 
-    public Date lastReviewDate;
+    public String lastReviewDate;
     public int nextReviewDays;
     public int masterScore;
 

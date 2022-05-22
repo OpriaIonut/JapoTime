@@ -1,6 +1,7 @@
 package com.example.japotimeapp.fragments;
 
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -60,7 +61,7 @@ public class StudyPageFragment extends Fragment
     private ArrayAdapter<String> backMeaningAdapter;
 
     private KanjiCard currentCard;
-    private LocalTime studyStartTime;
+    public LocalTime studyStartTime;
 
     public StudyPageFragment(MainActivity _mainActivity)
     {
@@ -110,7 +111,15 @@ public class StudyPageFragment extends Fragment
         studyPageCardsReview.setText("" + mainActivity.dailyReview.GetInReviewCardsCount());
         studyPageCardsLastCheck.setText("" + mainActivity.dailyReview.GetLastCheckCardsCount());
 
-        backMeaningAdapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_list_item_1, backMeaningList);
+        backMeaningAdapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_list_item_1, backMeaningList){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent){
+                View view = super.getView(position, convertView, parent);
+                TextView tv = (TextView) view.findViewById(android.R.id.text1);
+                tv.setTextColor(getResources().getColor(R.color.normalText));
+                return view;
+            }
+        };;
         backMeaning.setAdapter(backMeaningAdapter);
 
         Button backBtn = view.findViewById(R.id.studyPageBackBtn);
@@ -118,27 +127,8 @@ public class StudyPageFragment extends Fragment
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View v) {
-
-                LocalTime endTime = LocalTime.now();
-                Duration currentStudySession = Duration.between(studyStartTime, endTime);
-
-                long seconds = 0;
-
-                if(mainActivity.dailyReview.totalSpentTimeStudying.equals("00:00:00"))
-                    seconds = currentStudySession.getSeconds();
-                else
-                {
-                    Duration dayTotal = Duration.between(LocalTime.MIN, LocalTime.parse(mainActivity.dailyReview.totalSpentTimeStudying));
-                    Duration newTotal = dayTotal.plus(currentStudySession);
-                    seconds = newTotal.getSeconds();
-                }
-
-                long HH = seconds / 3600;
-                long MM = (seconds % 3600) / 60;
-                long SS = seconds % 60;
-
-                mainActivity.dailyReview.totalSpentTimeStudying = String.format("%02d:%02d:%02d", HH, MM, SS);
-
+                mainActivity.isStudyPageActive = false;
+                CalculateTimePassed();
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new MainPageFragment(mainActivity)).commit();
             }
         });
@@ -156,14 +146,54 @@ public class StudyPageFragment extends Fragment
         PickNextCard();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void CalculateTimePassed()
+    {
+        LocalTime endTime = LocalTime.now();
+        Duration currentStudySession = Duration.between(studyStartTime, endTime);
+
+        long seconds = 0;
+
+        if(mainActivity.dailyReview.totalSpentTimeStudying.equals("00:00:00"))
+            seconds = currentStudySession.getSeconds();
+        else
+        {
+            Duration dayTotal = Duration.between(LocalTime.MIN, LocalTime.parse(mainActivity.dailyReview.totalSpentTimeStudying));
+            Duration newTotal = dayTotal.plus(currentStudySession);
+            seconds = newTotal.getSeconds();
+        }
+
+        long HH = seconds / 3600;
+        long MM = (seconds % 3600) / 60;
+        long SS = seconds % 60;
+
+        mainActivity.dailyReview.totalSpentTimeStudying = String.format("%02d:%02d:%02d", HH, MM, SS);
+    }
+
+    @SuppressLint("SetTextI18n")
     public void ShowCardBack()
     {
         showAnswerBtn.setVisibility(View.GONE);
+        easyBtn.setText("EASY");
+        hardBtn.setText("HARD");
+        goodBtn.setText("GOOD");
 
         String cardType = mainActivity.dailyReview.GetLastCardType();
         switch(cardType)
         {
             case "Refresh":
+                againBtn.setVisibility(View.VISIBLE);
+                hardBtn.setVisibility(View.VISIBLE);
+                goodBtn.setVisibility(View.VISIBLE);
+                easyBtn.setVisibility(View.VISIBLE);
+
+                if(currentCard.masterScore > 10)
+                {
+                    hardBtn.setText("HARD\n" + GetNextDateDisplay(currentCard.masterScore + 1));
+                    goodBtn.setText("GOOD\n" + GetNextDateDisplay(currentCard.masterScore + 5));
+                    easyBtn.setText("EASY\n" + GetNextDateDisplay(currentCard.masterScore + 10));
+                }
+                break;
             case "Review":
                 againBtn.setVisibility(View.VISIBLE);
                 hardBtn.setVisibility(View.VISIBLE);
@@ -177,6 +207,8 @@ public class StudyPageFragment extends Fragment
             case "LastCheck":
                 againBtn.setVisibility(View.VISIBLE);
                 easyBtn.setVisibility(View.VISIBLE);
+
+                easyBtn.setText("EASY\n" + GetNextDateDisplay(currentCard.masterScore));
                 break;
         }
 
@@ -193,6 +225,21 @@ public class StudyPageFragment extends Fragment
         backMeaningAdapter.notifyDataSetChanged();
     }
 
+    public String GetNextDateDisplay(int cardScore)
+    {
+        int nextReviewDate = mainActivity.dailyReview.GetNextReviewDays(cardScore);
+        String nextReviewText = nextReviewDate + " d";
+
+        if(nextReviewDate >= 30)
+        {
+            nextReviewDate /= 30;
+            nextReviewText = String.format("%.02f", nextReviewDate) + " m";
+        }
+        return nextReviewText;
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void ParseCardAnswer(CardAnswer selectedAnswer)
     {
         mainActivity.dailyReview.ValidateStudyCard(selectedAnswer, currentCard);
@@ -205,6 +252,7 @@ public class StudyPageFragment extends Fragment
         PickNextCard();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void PickNextCard()
     {
         frontCard.setVisibility(View.VISIBLE);
@@ -215,6 +263,8 @@ public class StudyPageFragment extends Fragment
         //End of the session
         if(currentCard == null)
         {
+            mainActivity.isStudyPageActive = false;
+            CalculateTimePassed();
             getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new MainPageFragment(mainActivity)).commit();
             return;
         }

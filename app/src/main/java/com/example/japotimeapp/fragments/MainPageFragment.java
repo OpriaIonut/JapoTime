@@ -71,6 +71,7 @@ public class MainPageFragment extends Fragment
                     builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @RequiresApi(api = Build.VERSION_CODES.O)
                         public void onClick(DialogInterface dialog, int id) {
+                            mainActivity.isStudyPageActive = true;
                             mainActivity.dailyReview.GenerateDayReview();
                             getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new StudyPageFragment(mainActivity)).commit();
                             dialog.dismiss();
@@ -86,6 +87,7 @@ public class MainPageFragment extends Fragment
                 }
                 else
                 {
+                    mainActivity.isStudyPageActive = true;
                     getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new StudyPageFragment(mainActivity)).commit();
                 }
             }

@@ -122,5 +122,13 @@ public class SettingsPageFragment extends Fragment
                 alert.show();
             }
         });
+
+        Button cardBrowserBtn = view.findViewById(R.id.settingsPageCardBrowser);
+        cardBrowserBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new CardBrowserFragment(mainActivity)).commit();
+            }
+        });
     }
 }

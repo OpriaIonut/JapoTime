@@ -40,6 +40,8 @@ public class DailyReview
     private String pickedListForKanji = "";
     private int pickedListIndex = 0;
 
+    private int reviewIterator = 0;
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     public DailyReview(DataSaver _dataSaver, KanjiCollection _kanjiCollection)
     {
@@ -102,17 +104,18 @@ public class DailyReview
             KanjiCard currentCard = kanjiCollection.cardsCollection.get(index);
 
             //If it is a card that hasn't been learned, then add it to the list
-            if(currentCard.lastReviewDate == null)
+            if(currentCard.masterScore == 0)
             {
                 if(newCardsIDs.size() < newCardsLimit)
                 {
                     newCardsIDs.add(index);
                 }
             }
-            else
+            else if(currentCard.lastReviewDate != null)
             {
+                System.out.println(currentCard.lastReviewDate);
                 //Otherwise, if it has been learned, check if it should be learned now or not
-                LocalDate dateParser = LocalDate.parse(currentDate, formatter);
+                LocalDate dateParser = LocalDate.parse(currentCard.lastReviewDate, formatter);
 
                 LocalDate reviewDate = dateParser.plusDays(currentCard.nextReviewDays);
                 int reviewDayDifference = (int) ChronoUnit.DAYS.between(dateParser, reviewDate);
@@ -171,10 +174,15 @@ public class DailyReview
             }
             else
             {
+                if(reviewIterator >= newCardsIDs.size())
+                    reviewIterator = 0;
+
                 //If we cleared refresh cards & review cards, start adding review cards
-                int pickedIndex = randomGenerator.nextInt(newCardsIDs.size());
+                int pickedIndex = reviewIterator;
                 pickedListForKanji = "New";
                 pickedListIndex = pickedIndex;
+                reviewIterator++;
+
                 return kanjiCollection.cardsCollection.get(newCardsIDs.get(pickedIndex));
             }
         }
@@ -206,7 +214,7 @@ public class DailyReview
         switch (selectedAnswer)
         {
             case Again:
-                cardScore = currentCard.masterScore >= 5 ? 5 : 1;
+                cardScore = 1;
                 break;
             case Hard:
                 cardScore++;
@@ -227,6 +235,7 @@ public class DailyReview
                 break;
         }
         currentCard.masterScore = cardScore;
+        currentCard.lastReviewDate = currentDate;
 
         int removedElem;
         switch(pickedListForKanji)
@@ -234,7 +243,8 @@ public class DailyReview
             case "Refresh":
                 removedElem = refreshCardsIDs.get(pickedListIndex);
                 refreshCardsIDs.remove(pickedListIndex);
-                inReviewIDs.add(removedElem);
+                if(cardScore < 10)
+                    inReviewIDs.add(removedElem);
                 break;
             case "Review":
                 if(cardScore >= 10)

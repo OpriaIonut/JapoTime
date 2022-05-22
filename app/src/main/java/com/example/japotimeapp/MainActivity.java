@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     public DataSaver dataSaver = null;
     public String currentDate;
 
+    public Boolean isStudyPageActive = false;
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState)
