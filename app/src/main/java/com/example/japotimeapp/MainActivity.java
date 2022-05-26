@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.example.japotimeapp.enums.ActiveFragment;
 import com.example.japotimeapp.fragments.LoadingScreenFragment;
 import com.example.japotimeapp.fragments.MainPageFragment;
 import com.example.japotimeapp.utils.DailyReview;
@@ -23,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +33,8 @@ import java.util.logging.SimpleFormatter;
 public class MainActivity extends AppCompatActivity {
 
     public static final String inputUrl = "https://japotime.fra1.digitaloceanspaces.com/Yomichan.txt";
+
+    public ActiveFragment currentActiveFragment;
 
     public KanjiCollection kanjiCollection = null;
     public DailyReview dailyReview = null;
@@ -50,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         currentDate = new SimpleDateFormat("dd-MM-yyyy").format(date);
 
         getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainer, new LoadingScreenFragment(this)).commit();
+        currentActiveFragment = ActiveFragment.LoadingScreen;
         new FetchData().start();
     }
 
@@ -63,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         dailyReview = new DailyReview(dataSaver, kanjiCollection);
 
         getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainer, new MainPageFragment(this)).commit();
+        currentActiveFragment = ActiveFragment.MainPage;
     }
 
     public class FetchData extends Thread
@@ -100,6 +106,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        if(currentActiveFragment == ActiveFragment.StudyPage)
+        {
+            dailyReview.studyStartTime = LocalTime.now();
+        }
     }
 
     //When the app pauses or closes, save the data
@@ -107,6 +118,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
+        if(currentActiveFragment == ActiveFragment.StudyPage)
+            dailyReview.CalculateTimePassed();
+
         dataSaver.SaveData(currentDate, false);
     }
 

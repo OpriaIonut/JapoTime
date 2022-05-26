@@ -8,7 +8,9 @@ import androidx.annotation.RequiresApi;
 import com.example.japotimeapp.enums.CardAnswer;
 
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -20,6 +22,8 @@ public class DailyReview
 {
     private DataSaver dataSaver;
     private KanjiCollection kanjiCollection;
+
+    public LocalTime studyStartTime;
 
     public List<Integer> newCardsIDs;
     public List<Integer> refreshCardsIDs;
@@ -95,7 +99,7 @@ public class DailyReview
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void GenerateDayReview()
     {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd--MM-yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
         //Find the kanji that should be reviewed
         List<Pair<Integer, Integer>> kanjiToReview = new ArrayList<>();
@@ -113,7 +117,6 @@ public class DailyReview
             }
             else if(currentCard.lastReviewDate != null)
             {
-                System.out.println(currentCard.lastReviewDate);
                 //Otherwise, if it has been learned, check if it should be learned now or not
                 LocalDate dateParser = LocalDate.parse(currentCard.lastReviewDate, formatter);
 
@@ -167,31 +170,37 @@ public class DailyReview
             else if(!refreshCardsEmptied)
             {
                 //If we finished refresh cards, we need to empty review cards before moving on to new cards
-                int pickedIndex = randomGenerator.nextInt(inReviewIDs.size());
+                if(reviewIterator >= inReviewIDs.size())
+                    reviewIterator = 0;
+
+                int pickedIndex = reviewIterator;
                 pickedListForKanji = "Review";
                 pickedListIndex = pickedIndex;
+                reviewIterator++;
+
                 return kanjiCollection.cardsCollection.get(inReviewIDs.get(pickedIndex));
             }
             else
             {
-                if(reviewIterator >= newCardsIDs.size())
-                    reviewIterator = 0;
-
                 //If we cleared refresh cards & review cards, start adding review cards
-                int pickedIndex = reviewIterator;
+                int pickedIndex = randomGenerator.nextInt(newCardsIDs.size());
                 pickedListForKanji = "New";
                 pickedListIndex = pickedIndex;
-                reviewIterator++;
 
                 return kanjiCollection.cardsCollection.get(newCardsIDs.get(pickedIndex));
             }
         }
-        else if (inReviewIDs.size() > 0)
+        else if (inReviewIDs.size() > 5 || (lastCheckIDs.size() == 0 && inReviewIDs.size() > 0))
         {
+            if(reviewIterator >= inReviewIDs.size())
+                reviewIterator = 0;
+
             //If we reached review limit, add new cards
-            int pickedIndex = randomGenerator.nextInt(inReviewIDs.size());
+            int pickedIndex = reviewIterator;
             pickedListForKanji = "Review";
             pickedListIndex = pickedIndex;
+            reviewIterator++;
+
             return kanjiCollection.cardsCollection.get(inReviewIDs.get(pickedIndex));
         }
         else if(lastCheckIDs.size() > 0)
@@ -293,6 +302,30 @@ public class DailyReview
                 return 90;
             return val;
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void CalculateTimePassed()
+    {
+        LocalTime endTime = LocalTime.now();
+        Duration currentStudySession = Duration.between(studyStartTime, endTime);
+
+        long seconds = 0;
+
+        if(totalSpentTimeStudying.equals("00:00:00"))
+            seconds = currentStudySession.getSeconds();
+        else
+        {
+            Duration dayTotal = Duration.between(LocalTime.MIN, LocalTime.parse(totalSpentTimeStudying));
+            Duration newTotal = dayTotal.plus(currentStudySession);
+            seconds = newTotal.getSeconds();
+        }
+
+        long HH = seconds / 3600;
+        long MM = (seconds % 3600) / 60;
+        long SS = seconds % 60;
+
+        totalSpentTimeStudying = String.format("%02d:%02d:%02d", HH, MM, SS);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

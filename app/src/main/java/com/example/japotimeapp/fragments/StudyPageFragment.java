@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.japotimeapp.MainActivity;
 import com.example.japotimeapp.R;
+import com.example.japotimeapp.enums.ActiveFragment;
 import com.example.japotimeapp.enums.CardAnswer;
 import com.example.japotimeapp.utils.KanjiCard;
 
@@ -61,7 +62,6 @@ public class StudyPageFragment extends Fragment
     private ArrayAdapter<String> backMeaningAdapter;
 
     private KanjiCard currentCard;
-    public LocalTime studyStartTime;
 
     public StudyPageFragment(MainActivity _mainActivity)
     {
@@ -80,7 +80,7 @@ public class StudyPageFragment extends Fragment
     {
         super.onViewCreated(view, savedInstanceState);
 
-        studyStartTime = LocalTime.now();
+        mainActivity.dailyReview.studyStartTime = LocalTime.now();
 
         frontCard = view.findViewById(R.id.studyPageFront);
         backCard =  view.findViewById(R.id.studyPageBack);
@@ -128,8 +128,9 @@ public class StudyPageFragment extends Fragment
             @Override
             public void onClick(View v) {
                 mainActivity.isStudyPageActive = false;
-                CalculateTimePassed();
+                mainActivity.dailyReview.CalculateTimePassed();
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new MainPageFragment(mainActivity)).commit();
+                mainActivity.currentActiveFragment = ActiveFragment.MainPage;
             }
         });
 
@@ -144,30 +145,6 @@ public class StudyPageFragment extends Fragment
         showAnswerBtn.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { ShowCardBack(); }});
 
         PickNextCard();
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void CalculateTimePassed()
-    {
-        LocalTime endTime = LocalTime.now();
-        Duration currentStudySession = Duration.between(studyStartTime, endTime);
-
-        long seconds = 0;
-
-        if(mainActivity.dailyReview.totalSpentTimeStudying.equals("00:00:00"))
-            seconds = currentStudySession.getSeconds();
-        else
-        {
-            Duration dayTotal = Duration.between(LocalTime.MIN, LocalTime.parse(mainActivity.dailyReview.totalSpentTimeStudying));
-            Duration newTotal = dayTotal.plus(currentStudySession);
-            seconds = newTotal.getSeconds();
-        }
-
-        long HH = seconds / 3600;
-        long MM = (seconds % 3600) / 60;
-        long SS = seconds % 60;
-
-        mainActivity.dailyReview.totalSpentTimeStudying = String.format("%02d:%02d:%02d", HH, MM, SS);
     }
 
     @SuppressLint("SetTextI18n")
@@ -189,9 +166,9 @@ public class StudyPageFragment extends Fragment
 
                 if(currentCard.masterScore > 10)
                 {
-                    hardBtn.setText("HARD\n" + GetNextDateDisplay(currentCard.masterScore + 1));
-                    goodBtn.setText("GOOD\n" + GetNextDateDisplay(currentCard.masterScore + 5));
-                    easyBtn.setText("EASY\n" + GetNextDateDisplay(currentCard.masterScore + 10));
+                    hardBtn.setText("HARD - " + GetNextDateDisplay(currentCard.masterScore + 1));
+                    goodBtn.setText("GOOD - " + GetNextDateDisplay(currentCard.masterScore + 5));
+                    easyBtn.setText("EASY - " + GetNextDateDisplay(currentCard.masterScore + 10));
                 }
                 break;
             case "Review":
@@ -208,7 +185,7 @@ public class StudyPageFragment extends Fragment
                 againBtn.setVisibility(View.VISIBLE);
                 easyBtn.setVisibility(View.VISIBLE);
 
-                easyBtn.setText("EASY\n" + GetNextDateDisplay(currentCard.masterScore));
+                easyBtn.setText("EASY - " + GetNextDateDisplay(currentCard.masterScore));
                 break;
         }
 
@@ -264,8 +241,9 @@ public class StudyPageFragment extends Fragment
         if(currentCard == null)
         {
             mainActivity.isStudyPageActive = false;
-            CalculateTimePassed();
+            mainActivity.dailyReview.CalculateTimePassed();
             getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new MainPageFragment(mainActivity)).commit();
+            mainActivity.currentActiveFragment = ActiveFragment.MainPage;
             return;
         }
 

@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.japotimeapp.MainActivity;
 import com.example.japotimeapp.R;
+import com.example.japotimeapp.enums.ActiveFragment;
 
 public class SettingsPageFragment extends Fragment
 {
@@ -71,7 +72,10 @@ public class SettingsPageFragment extends Fragment
             @Override
             public void onClick(View v) {
                 if(currentActiveMenu.equals("MainSettingsPage"))
+                {
                     getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new MainPageFragment(mainActivity)).commit();
+                    mainActivity.currentActiveFragment = ActiveFragment.MainPage;
+                }
                 else if(currentActiveMenu.equals("StudyAlg"))
                 {
                     mainActivity.dailyReview.newCardsLimit = Integer.parseInt(newCardsLimitField.getText().toString());
@@ -128,6 +132,7 @@ public class SettingsPageFragment extends Fragment
             @Override
             public void onClick(View v) {
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new CardBrowserFragment(mainActivity)).commit();
+                mainActivity.currentActiveFragment = ActiveFragment.CardBrowser;
             }
         });
     }

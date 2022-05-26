@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.japotimeapp.MainActivity;
 import com.example.japotimeapp.R;
+import com.example.japotimeapp.enums.ActiveFragment;
 import com.example.japotimeapp.utils.KanjiCard;
 
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ public class CardBrowserFragment extends Fragment
             @Override
             public void onClick(View v) {
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new SettingsPageFragment(mainActivity)).commit();
+                mainActivity.currentActiveFragment = ActiveFragment.SettingsPage;
             }
         });
 

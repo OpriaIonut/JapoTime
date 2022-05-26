@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.japotimeapp.MainActivity;
 import com.example.japotimeapp.R;
+import com.example.japotimeapp.enums.ActiveFragment;
 
 public class MainPageFragment extends Fragment
 {
@@ -74,6 +75,7 @@ public class MainPageFragment extends Fragment
                             mainActivity.isStudyPageActive = true;
                             mainActivity.dailyReview.GenerateDayReview();
                             getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new StudyPageFragment(mainActivity)).commit();
+                            mainActivity.currentActiveFragment = ActiveFragment.StudyPage;
                             dialog.dismiss();
                         }
                     });
@@ -89,6 +91,7 @@ public class MainPageFragment extends Fragment
                 {
                     mainActivity.isStudyPageActive = true;
                     getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new StudyPageFragment(mainActivity)).commit();
+                    mainActivity.currentActiveFragment = ActiveFragment.StudyPage;
                 }
             }
         });
@@ -98,6 +101,7 @@ public class MainPageFragment extends Fragment
             @Override
             public void onClick(View v) {
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new SettingsPageFragment(mainActivity)).commit();
+                mainActivity.currentActiveFragment = ActiveFragment.SettingsPage;
             }
         });
     }
