@@ -1,5 +1,8 @@
 package com.example.japotimeapp.fragments;
 
+import android.animation.ArgbEvaluator;
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -54,46 +57,51 @@ public class CardBrowserFragment extends Fragment
             }
         });
 
-        ScrollView scrollView = view.findViewById(R.id.cardBrowserScrollView);
-        TableLayout tableLayout = createTableLayout();
-        scrollView.addView(tableLayout);
+        createTableLayout(view);
     }
 
-    private TableLayout createTableLayout()
+    @SuppressLint("ResourceAsColor")
+    private void createTableLayout(View view)
     {
-        TableLayout.LayoutParams tableLayoutParams = new TableLayout.LayoutParams();
-        TableLayout tableLayout = new TableLayout(mainActivity);
+        TableRow.LayoutParams textViewParam1 = new TableRow.LayoutParams(0, TableLayout.LayoutParams.MATCH_PARENT,0.3f);
+        textViewParam1.setMargins(5, 15, 5, 15);
 
-        TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams();
-        tableRowParams.setMargins(1, 1, 1, 1);
-        tableRowParams.weight = 1;
+        TableRow.LayoutParams textViewParam2 = new TableRow.LayoutParams(0, TableLayout.LayoutParams.MATCH_PARENT,0.7f);
+        textViewParam2.setMargins(5, 15, 5, 15);
 
-        for (int i = 0; i < mainActivity.kanjiCollection.cardsCollection.size(); i++)
+        TableLayout tableLayout = view.findViewById(R.id.cardBrowserTable);
+//        tableLayout.setBackgroundColor(Color.parseColor("#ccccdd"));
+        TableLayout.LayoutParams tableRowParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT);
+
+        for (int index = 0; index < mainActivity.kanjiCollection.cardsCollection.size(); index++)
         {
             TableRow tableRow = new TableRow(mainActivity);
-            //tableRow.setBackgroundColor(Color.BLACK);
+            tableRow.setLayoutParams(tableRowParams);
 
             TextView textView1 = new TextView(mainActivity);
-            textView1.setGravity(Gravity.LEFT);
-            textView1.setText(mainActivity.kanjiCollection.cardsCollection.get(i).kanji);
+            textView1.setTextSize(20);
+            textView1.setGravity(Gravity.CENTER);
+            textView1.setText(mainActivity.kanjiCollection.cardsCollection.get(index).kanji);
+            textView1.setLayoutParams(textViewParam1);
+//            textView1.setBackgroundColor(R.color.grayBlueish);
 
             TextView textView2 = new TextView(mainActivity);
             textView2.setGravity(Gravity.LEFT);
             String meanings = "";
-            for(int index = 0; index < mainActivity.kanjiCollection.cardsCollection.get(i).meanings.size(); index++)
+            for(int index2 = 0; index2 < mainActivity.kanjiCollection.cardsCollection.get(index).meanings.size(); index2++)
             {
-                meanings += "-" + mainActivity.kanjiCollection.cardsCollection.get(i).meanings.get(index);
-                if(index != mainActivity.kanjiCollection.cardsCollection.get(i).meanings.size() - 1)
+                meanings += "- " + mainActivity.kanjiCollection.cardsCollection.get(index).meanings.get(index2);
+                if(index2 != mainActivity.kanjiCollection.cardsCollection.get(index).meanings.size() - 1)
                     meanings += "\n";
             }
             textView2.setText(meanings);
+            textView2.setLayoutParams(textViewParam2);
+//            textView2.setBackgroundColor(R.color.grayBlueish);
 
-            tableRow.addView(textView1, tableRowParams);
-            tableRow.addView(textView2, tableRowParams);
+            tableRow.addView(textView1);
+            tableRow.addView(textView2);
 
-            tableLayout.addView(tableRow, tableLayoutParams);
+            tableLayout.addView(tableRow);
         }
-
-        return tableLayout;
     }
 }
