@@ -84,7 +84,7 @@
             android:id="@+id/studyPageFront"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -125,7 +125,7 @@
             android:id="@+id/studyPageBack"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -303,7 +303,7 @@
             android:text="SHOW ANSWER"
             android:textColor="@color/normalText"
             android:textSize="12sp"
-            android:visibility="gone" />
+            android:visibility="visible" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

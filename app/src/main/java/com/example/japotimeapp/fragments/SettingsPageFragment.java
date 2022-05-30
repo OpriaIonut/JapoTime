@@ -102,6 +102,15 @@ public class SettingsPageFragment extends Fragment
             }
         });
 
+        Button statisticsBtn = view.findViewById(R.id.settingsPageStatisticsBtn);
+        statisticsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new StatisticsFragment(mainActivity)).commit();
+                mainActivity.currentActiveFragment = ActiveFragment.StatisticsPage;
+            }
+        });
+
         Button resetProgressBtn = view.findViewById(R.id.settingsPageResetProgressBtn);
         resetProgressBtn.setOnClickListener(new View.OnClickListener() {
             @Override
