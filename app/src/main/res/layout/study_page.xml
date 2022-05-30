@@ -224,7 +224,7 @@
             android:backgroundTint="@color/answerBtnAgain"
             android:text="Again"
             android:textColor="@color/normalText"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:visibility="gone" />
 
         <Button
@@ -237,7 +237,7 @@
             android:backgroundTint="@color/answerBtnHard"
             android:text="Hard"
             android:textColor="@color/normalText"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:visibility="gone" />
 
         <Button
@@ -250,7 +250,7 @@
             android:backgroundTint="@color/answerBtnGood"
             android:text="Good"
             android:textColor="@color/normalText"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:visibility="gone" />
 
         <Button
@@ -263,7 +263,7 @@
             android:backgroundTint="@color/answerBtnEasy"
             android:text="Easy"
             android:textColor="@color/normalText"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:visibility="gone" />
 
         <Button
@@ -276,7 +276,7 @@
             android:backgroundTint="@color/answerBtnHard"
             android:text="Learn"
             android:textColor="@color/normalText"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:visibility="gone" />
 
         <Button
@@ -289,7 +289,7 @@
             android:backgroundTint="@color/answerBtnEasy"
             android:text="Skip"
             android:textColor="@color/normalText"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:visibility="gone" />
 
         <Button
@@ -302,7 +302,7 @@
             android:backgroundTint="@color/normalBtn"
             android:text="SHOW ANSWER"
             android:textColor="@color/normalText"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:visibility="gone" />
     </LinearLayout>
 

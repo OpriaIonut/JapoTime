@@ -121,7 +121,7 @@ public class DailyReview
                 LocalDate dateParser = LocalDate.parse(currentCard.lastReviewDate, formatter);
 
                 LocalDate reviewDate = dateParser.plusDays(currentCard.nextReviewDays);
-                int reviewDayDifference = (int) ChronoUnit.DAYS.between(dateParser, reviewDate);
+                int reviewDayDifference = (int) ChronoUnit.DAYS.between(reviewDate, dateParser);
                 if(reviewDayDifference <= 0)
                 {
                     kanjiToReview.add(new Pair<>(index, reviewDayDifference));
@@ -152,6 +152,8 @@ public class DailyReview
         if(refreshCardsIDs.size() == 0)
             refreshCardsEmptied = true;
     }
+
+    private Boolean clearLastCheck = false;
 
     public KanjiCard GetNextStudyCard()
     {
@@ -190,25 +192,35 @@ public class DailyReview
                 return kanjiCollection.cardsCollection.get(newCardsIDs.get(pickedIndex));
             }
         }
-        else if (inReviewIDs.size() > 5 || (lastCheckIDs.size() == 0 && inReviewIDs.size() > 0))
+        else if(lastCheckIDs.size() > 0 || inReviewIDs.size() > 0)
         {
-            if(reviewIterator >= inReviewIDs.size())
-                reviewIterator = 0;
+            if (!clearLastCheck)
+            {
+                if (reviewIterator >= inReviewIDs.size())
+                    reviewIterator = 0;
 
-            //If we reached review limit, add new cards
-            int pickedIndex = reviewIterator;
-            pickedListForKanji = "Review";
-            pickedListIndex = pickedIndex;
-            reviewIterator++;
+                //If we reached review limit, add new cards
+                int pickedIndex = reviewIterator;
+                pickedListForKanji = "Review";
+                pickedListIndex = pickedIndex;
+                reviewIterator++;
 
-            return kanjiCollection.cardsCollection.get(inReviewIDs.get(pickedIndex));
-        }
-        else if(lastCheckIDs.size() > 0)
-        {
-            int pickedIndex = randomGenerator.nextInt(lastCheckIDs.size());
-            pickedListForKanji = "LastCheck";
-            pickedListIndex = pickedIndex;
-            return kanjiCollection.cardsCollection.get(lastCheckIDs.get(pickedIndex));
+                if (inReviewIDs.size() == 1 && refreshCardsIDs.size() == 0 && newCardsIDs.size() == 0)
+                    clearLastCheck = true;
+
+                return kanjiCollection.cardsCollection.get(inReviewIDs.get(pickedIndex));
+            }
+            else
+            {
+                int pickedIndex = randomGenerator.nextInt(lastCheckIDs.size());
+                pickedListForKanji = "LastCheck";
+                pickedListIndex = pickedIndex;
+
+                if(lastCheckIDs.size() == 1 && refreshCardsIDs.size() == 0 && newCardsIDs.size() == 0)
+                    clearLastCheck = false;
+
+                return kanjiCollection.cardsCollection.get(lastCheckIDs.get(pickedIndex));
+            }
         }
         else
             return null; //Finished the deck
@@ -294,7 +306,7 @@ public class DailyReview
     public int GetNextReviewDays(int cardScore)
     {
         if(cardScore >= 10 && cardScore <= 30)
-            return (int) ((cardScore - 10) * 1.35 + 3);
+            return (int) ((cardScore - 10) * 1.45 + 1);
         else
         {
             int val = (int)(cardScore - 30) * 3 + 30;

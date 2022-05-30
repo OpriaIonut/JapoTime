@@ -205,13 +205,7 @@ public class StudyPageFragment extends Fragment
     public String GetNextDateDisplay(int cardScore)
     {
         int nextReviewDate = mainActivity.dailyReview.GetNextReviewDays(cardScore);
-        String nextReviewText = nextReviewDate + " d";
-
-        if(nextReviewDate >= 30)
-        {
-            nextReviewDate /= 30;
-            nextReviewText = String.format("%.02f", nextReviewDate) + " m";
-        }
+        String nextReviewText = nextReviewDate + "d";
         return nextReviewText;
     }
 
