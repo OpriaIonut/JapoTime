@@ -1,6 +1,7 @@
 package com.example.japotimeapp.fragments;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,28 +9,36 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.example.japotimeapp.MainActivity;
 import com.example.japotimeapp.R;
 import com.example.japotimeapp.enums.ActiveFragment;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.utils.ColorTemplate;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class StatisticsFragment extends Fragment
 {
     private MainActivity mainActivity;
+
+    private int historyOffset = 30;
+    private LineChart cardReviewLineChart;
+    private LineChart timeReviewLineChart;
 
     public StatisticsFragment(MainActivity _mainActivity)
     {
@@ -43,6 +52,7 @@ public class StatisticsFragment extends Fragment
         return inflater.inflate(R.layout.statistics_page, container, false);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
     {
         Button backBtn = view.findViewById(R.id.statisticsBackBtn);
@@ -59,6 +69,24 @@ public class StatisticsFragment extends Fragment
 
         PieChart pieChart = view.findViewById(R.id.cardMasteryPieChart);
         CreatePieChart(pieChart);
+
+        cardReviewLineChart = view.findViewById(R.id.dailyCardProgressLineChart);
+        timeReviewLineChart = view.findViewById(R.id.dailyTimeProgressLineChart);
+        CreateCardReviewLineChart();
+        CreateTimeReviewLineChart();
+
+
+        Button oneWeekBtn = view.findViewById(R.id.statisticsDailyReviewWeekBtn);
+        oneWeekBtn.setOnClickListener(v -> { historyOffset = 7; CreateCardReviewLineChart(); CreateTimeReviewLineChart(); });
+
+        Button oneMonthBtn = view.findViewById(R.id.statisticsDailyReviewMonthBtn);
+        oneMonthBtn.setOnClickListener(v -> { historyOffset = 30; CreateCardReviewLineChart(); CreateTimeReviewLineChart(); });
+
+        Button threeMonthsBtn = view.findViewById(R.id.statisticsDailyReview3MonthsBtn);
+        threeMonthsBtn.setOnClickListener(v -> { historyOffset = 90; CreateCardReviewLineChart(); CreateTimeReviewLineChart(); });
+
+        Button oneYearBtn = view.findViewById(R.id.statisticsDailyReviewYearBtn);
+        oneYearBtn.setOnClickListener(v -> { historyOffset = 365; CreateCardReviewLineChart(); CreateTimeReviewLineChart(); });
     }
 
     private void CreateBarChart(BarChart barChart)
@@ -178,5 +206,86 @@ public class StatisticsFragment extends Fragment
         pieChart.getDescription().setEnabled(false);
         pieChart.setCenterText("");
         pieChart.animate();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void CreateCardReviewLineChart()
+    {
+        ArrayList reviewedCardsData = new ArrayList();
+
+        cardReviewLineChart.invalidate();
+        cardReviewLineChart.clear();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate currentDate = LocalDate.parse(mainActivity.currentDate, formatter);;
+        LocalDate startDate = currentDate.minusDays(historyOffset);
+
+        for(int index = 0; index < historyOffset; index++)
+        {
+            String dataDate = startDate.plusDays(index).format(formatter);
+            if(mainActivity.dataSaver.loadedData.studiedCardsHistory.containsKey(dataDate))
+                reviewedCardsData.add(new Entry(index, mainActivity.dataSaver.loadedData.studiedCardsHistory.get(dataDate)));
+            else
+                reviewedCardsData.add(new Entry(index, 0));
+        }
+
+        LineDataSet set1 = new LineDataSet(reviewedCardsData, "Cards Reviewed");
+        set1.setDrawCircles(false);
+        set1.setValueTextColor(Color.WHITE);
+
+        cardReviewLineChart.getLegend().setTextColor(Color.WHITE);
+        cardReviewLineChart.getAxisLeft().setTextColor(Color.WHITE);
+        cardReviewLineChart.getAxisRight().setTextColor(Color.WHITE);
+        cardReviewLineChart.getXAxis().setDrawLabels(false);
+        cardReviewLineChart.getLegend().setTextColor(Color.WHITE);
+        cardReviewLineChart.getDescription().setEnabled(false);
+
+        LineData data = new LineData(set1);
+        cardReviewLineChart.setData(data);
+
+        cardReviewLineChart.animateX(1000);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void CreateTimeReviewLineChart()
+    {
+        ArrayList reviewTimeData = new ArrayList();
+
+        timeReviewLineChart.invalidate();
+        timeReviewLineChart.clear();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate currentDate = LocalDate.parse(mainActivity.currentDate, formatter);;
+        LocalDate startDate = currentDate.minusDays(historyOffset);
+
+        for(int index = 0; index < historyOffset; index++)
+        {
+            String dataDate = startDate.plusDays(index).format(formatter);
+            if(mainActivity.dataSaver.loadedData.studiedCardsHistory.containsKey(dataDate))
+            {
+                String[] split = mainActivity.dataSaver.loadedData.studiedTimeHistory.get(dataDate).split(":");
+                float time = (float) (Integer.parseInt(split[0]) * 60 + Integer.parseInt(split[1]) + Integer.parseInt(split[2]) / 60.0);
+                reviewTimeData.add(new Entry(index, time));
+            }
+            else
+                reviewTimeData.add(new Entry(index, 0));
+        }
+
+        LineDataSet set2 = new LineDataSet(reviewTimeData, "Review Time Minutes");
+        set2.setValueTextColor(Color.WHITE);
+        set2.setColor(Color.GREEN);
+        set2.setDrawCircles(false);
+
+        timeReviewLineChart.getLegend().setTextColor(Color.WHITE);
+        timeReviewLineChart.getAxisLeft().setTextColor(Color.WHITE);
+        timeReviewLineChart.getAxisRight().setTextColor(Color.WHITE);
+        timeReviewLineChart.getXAxis().setDrawLabels(false);
+        timeReviewLineChart.getLegend().setTextColor(Color.WHITE);
+        timeReviewLineChart.getDescription().setEnabled(false);
+
+        LineData data = new LineData( set2);
+        timeReviewLineChart.setData(data);
+
+        timeReviewLineChart.animateX(1000);
     }
 }

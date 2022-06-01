@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Will be called when the app resumes, or control is given back to this activity (when the popup activities call finish())
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onResume() {
         super.onResume();

@@ -99,6 +99,9 @@ public class DailyReview
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void GenerateDayReview()
     {
+        reviewIterator = 0;
+        refreshCardsEmptied = false;
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
         //Find the kanji that should be reviewed
@@ -273,6 +276,13 @@ public class DailyReview
                     removedElem = inReviewIDs.get(pickedListIndex);
                     inReviewIDs.remove(pickedListIndex);
                     lastCheckIDs.add(removedElem);
+
+                    if(inReviewIDs.size() > 0)
+                    {
+                        reviewIterator--;
+                        if (reviewIterator < 0)
+                            reviewIterator = inReviewIDs.size() - 1;
+                    }
 
                     if(inReviewIDs.size() == 0)
                         refreshCardsEmptied = true;

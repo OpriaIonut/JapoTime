@@ -5,6 +5,8 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +32,15 @@ import java.util.List;
 public class CardBrowserFragment extends Fragment
 {
     private final MainActivity mainActivity;
+
+    private int cardsPerFrame = 10;
+    private int reachedPopulationIndex = 0;
+    private ArrayList<KanjiCard> cardsToPopulate;
+
+    private TableRow.LayoutParams textViewParam1;
+    private TableRow.LayoutParams textViewParam2;
+    private TableLayout tableLayout;
+    private TableLayout.LayoutParams tableRowParams;
 
     public CardBrowserFragment(MainActivity _mainActivity)
     {
@@ -57,23 +68,40 @@ public class CardBrowserFragment extends Fragment
             }
         });
 
-        createTableLayout(view);
-    }
-
-    @SuppressLint("ResourceAsColor")
-    private void createTableLayout(View view)
-    {
-        TableRow.LayoutParams textViewParam1 = new TableRow.LayoutParams(0, TableLayout.LayoutParams.MATCH_PARENT,0.3f);
+        textViewParam1 = new TableRow.LayoutParams(0, TableLayout.LayoutParams.MATCH_PARENT,0.3f);
         textViewParam1.setMargins(5, 15, 5, 15);
 
-        TableRow.LayoutParams textViewParam2 = new TableRow.LayoutParams(0, TableLayout.LayoutParams.MATCH_PARENT,0.7f);
+        textViewParam2 = new TableRow.LayoutParams(0, TableLayout.LayoutParams.MATCH_PARENT,0.7f);
         textViewParam2.setMargins(5, 15, 5, 15);
 
-        TableLayout tableLayout = view.findViewById(R.id.cardBrowserTable);
-//        tableLayout.setBackgroundColor(Color.parseColor("#ccccdd"));
-        TableLayout.LayoutParams tableRowParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT);
+        tableLayout = view.findViewById(R.id.cardBrowserTable);
+        tableRowParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT);
+
+        FindCardsToPopulate(view);
+    }
+
+    private void FindCardsToPopulate(View view)
+    {
+        reachedPopulationIndex = 0;
+        cardsToPopulate = new ArrayList<>();
 
         for (int index = 0; index < mainActivity.kanjiCollection.cardsCollection.size(); index++)
+        {
+            cardsToPopulate.add(mainActivity.kanjiCollection.cardsCollection.get(index));
+        }
+
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                PopulateTable(view);
+            }
+        }, 100);
+    }
+
+    private void PopulateTable(View view)
+    {
+        for (int index = 0; index < cardsPerFrame && reachedPopulationIndex < cardsToPopulate.size(); index++, reachedPopulationIndex++)
         {
             TableRow tableRow = new TableRow(mainActivity);
             tableRow.setLayoutParams(tableRowParams);
@@ -81,27 +109,36 @@ public class CardBrowserFragment extends Fragment
             TextView textView1 = new TextView(mainActivity);
             textView1.setTextSize(20);
             textView1.setGravity(Gravity.CENTER);
-            textView1.setText(mainActivity.kanjiCollection.cardsCollection.get(index).kanji);
+            textView1.setText(cardsToPopulate.get(reachedPopulationIndex).kanji);
             textView1.setLayoutParams(textViewParam1);
-//            textView1.setBackgroundColor(R.color.grayBlueish);
 
             TextView textView2 = new TextView(mainActivity);
             textView2.setGravity(Gravity.LEFT);
             String meanings = "";
-            for(int index2 = 0; index2 < mainActivity.kanjiCollection.cardsCollection.get(index).meanings.size(); index2++)
+            for(int index2 = 0; index2 < cardsToPopulate.get(reachedPopulationIndex).meanings.size(); index2++)
             {
-                meanings += "- " + mainActivity.kanjiCollection.cardsCollection.get(index).meanings.get(index2);
-                if(index2 != mainActivity.kanjiCollection.cardsCollection.get(index).meanings.size() - 1)
+                meanings += "- " + cardsToPopulate.get(reachedPopulationIndex).meanings.get(index2);
+                if(index2 != cardsToPopulate.get(reachedPopulationIndex).meanings.size() - 1)
                     meanings += "\n";
             }
             textView2.setText(meanings);
             textView2.setLayoutParams(textViewParam2);
-//            textView2.setBackgroundColor(R.color.grayBlueish);
 
             tableRow.addView(textView1);
             tableRow.addView(textView2);
 
             tableLayout.addView(tableRow);
+        }
+
+        if(reachedPopulationIndex < cardsToPopulate.size())
+        {
+            final Handler handler = new Handler(Looper.getMainLooper());
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    PopulateTable(view);
+                }
+            }, 100);
         }
     }
 }
