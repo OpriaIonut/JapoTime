@@ -23,6 +23,7 @@ import com.example.japotimeapp.MainActivity;
 import com.example.japotimeapp.R;
 import com.example.japotimeapp.enums.ActiveFragment;
 import com.example.japotimeapp.utils.KanjiCard;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -46,7 +47,10 @@ public class CardBrowserFragment extends Fragment
     private TableLayout tableLayout;
     private TableLayout.LayoutParams tableRowParams;
 
+    private TextInputLayout textInputLayout;
+
     private String sortType = "";
+    private String matchString = "";
     private Boolean sortAsc = false;
     private Boolean runnableRunning = false;
 
@@ -106,6 +110,14 @@ public class CardBrowserFragment extends Fragment
             FindCardsToPopulate(view);
         });
 
+        textInputLayout = view.findViewById(R.id.cardBrowserSearchInput);
+        Button searchBtn = view.findViewById(R.id.cardBrowserSearchBtn);
+        searchBtn.setOnClickListener(v -> {
+            matchString = textInputLayout.getEditText().getText().toString();
+            System.out.println(matchString);
+            FindCardsToPopulate(view);
+        });
+
         FindCardsToPopulate(view);
     }
 
@@ -118,7 +130,30 @@ public class CardBrowserFragment extends Fragment
 
         for (int index = 0; index < mainActivity.kanjiCollection.cardsCollection.size(); index++)
         {
-            cardsToPopulate.add(mainActivity.kanjiCollection.cardsCollection.get(index));
+            Boolean addCard = false;
+            if(matchString.equals(""))
+                addCard = true;
+            else
+            {
+                if(mainActivity.kanjiCollection.cardsCollection.get(index).kanji.contains(matchString))
+                    addCard = true;
+                else if(mainActivity.kanjiCollection.cardsCollection.get(index).reading.contains(matchString))
+                    addCard = true;
+                else
+                {
+                    for(int index2 = 0; index2 < mainActivity.kanjiCollection.cardsCollection.get(index).meanings.size(); index2++)
+                    {
+                        if(mainActivity.kanjiCollection.cardsCollection.get(index).meanings.get(index2).contains(matchString))
+                        {
+                            addCard = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if(addCard)
+                cardsToPopulate.add(mainActivity.kanjiCollection.cardsCollection.get(index));
         }
 
         if(sortType.equals("SortByMastery") || sortType.equals("SortByTime"))
