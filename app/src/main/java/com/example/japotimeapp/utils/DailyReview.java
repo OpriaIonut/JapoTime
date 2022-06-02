@@ -118,13 +118,14 @@ public class DailyReview
                     newCardsIDs.add(index);
                 }
             }
-            else if(currentCard.lastReviewDate != null)
+            else if(currentCard.lastReviewDate != null && !refreshCardsIDs.contains(index) && !inReviewIDs.contains(index) && !lastCheckIDs.contains(index))
             {
                 //Otherwise, if it has been learned, check if it should be learned now or not
                 LocalDate dateParser = LocalDate.parse(currentCard.lastReviewDate, formatter);
+                LocalDate dateNow = LocalDate.parse(currentDate, formatter);
 
                 LocalDate reviewDate = dateParser.plusDays(currentCard.nextReviewDays);
-                int reviewDayDifference = (int) ChronoUnit.DAYS.between(reviewDate, dateParser);
+                int reviewDayDifference = (int) ChronoUnit.DAYS.between(reviewDate, dateNow);
                 if(reviewDayDifference <= 0)
                 {
                     kanjiToReview.add(new Pair<>(index, reviewDayDifference));
