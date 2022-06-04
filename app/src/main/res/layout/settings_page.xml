@@ -70,6 +70,20 @@
             app:layout_constraintTop_toBottomOf="@+id/settingsPageStatisticsBtn" />
 
         <Button
+            android:id="@+id/settingsPageCardBrowser2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@color/normalBtn"
+            android:text="Backup options"
+            android:textColor="@color/normalText"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/settingsPageCardBrowser" />
+
+        <Button
             android:id="@+id/settingsPageResetProgressBtn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -81,7 +95,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/settingsPageCardBrowser" />
+            app:layout_constraintTop_toBottomOf="@+id/settingsPageCardBrowser2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -111,7 +111,7 @@ public class DailyReview
             KanjiCard currentCard = kanjiCollection.cardsCollection.get(index);
 
             //If it is a card that hasn't been learned, then add it to the list
-            if(currentCard.masterScore == 0)
+            if(currentCard.masterScore == 0 && !newCardsIDs.contains(index))
             {
                 if(newCardsIDs.size() < newCardsLimit)
                 {
@@ -121,11 +121,11 @@ public class DailyReview
             else if(currentCard.lastReviewDate != null && !refreshCardsIDs.contains(index) && !inReviewIDs.contains(index) && !lastCheckIDs.contains(index))
             {
                 //Otherwise, if it has been learned, check if it should be learned now or not
-                LocalDate dateParser = LocalDate.parse(currentCard.lastReviewDate, formatter);
+                LocalDate lastReviewDate = LocalDate.parse(currentCard.lastReviewDate, formatter);
+                LocalDate nextReviewDate = lastReviewDate.plusDays(currentCard.nextReviewDays);
                 LocalDate dateNow = LocalDate.parse(currentDate, formatter);
 
-                LocalDate reviewDate = dateParser.plusDays(currentCard.nextReviewDays);
-                int reviewDayDifference = (int) ChronoUnit.DAYS.between(reviewDate, dateNow);
+                int reviewDayDifference = (int) ChronoUnit.DAYS.between(dateNow, nextReviewDate);
                 if(reviewDayDifference <= 0)
                 {
                     kanjiToReview.add(new Pair<>(index, reviewDayDifference));

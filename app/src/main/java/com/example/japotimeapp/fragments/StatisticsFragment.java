@@ -258,7 +258,7 @@ public class StatisticsFragment extends Fragment
         LocalDate currentDate = LocalDate.parse(mainActivity.currentDate, formatter);;
         LocalDate startDate = currentDate.minusDays(historyOffset);
 
-        for(int index = 0; index < historyOffset; index++)
+        for(int index = 0; index <= historyOffset; index++)
         {
             String dataDate = startDate.plusDays(index).format(formatter);
             if(mainActivity.dataSaver.loadedData.studiedCardsHistory.containsKey(dataDate))
