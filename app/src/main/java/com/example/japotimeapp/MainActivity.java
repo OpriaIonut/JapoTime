@@ -82,6 +82,9 @@ public class MainActivity extends AppCompatActivity {
         kanjiCollection = new KanjiCollection(result, dataSaver);
         dailyReview = new DailyReview(dataSaver, kanjiCollection);
 
+        if(dataSaver.currentOnlineSaveFile != null && !currentDate.equals(dataSaver.loadedData.lastOpenDate))
+            dataSaver.SaveDataOnline(dataSaver.currentOnlineSaveFile, currentDate, false);
+
         getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainer, new MainPageFragment(this)).commit();
         currentActiveFragment = ActiveFragment.MainPage;
     }

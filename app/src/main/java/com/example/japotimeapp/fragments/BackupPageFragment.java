@@ -81,7 +81,7 @@ public class BackupPageFragment extends Fragment
 
                 if(ContextCompat.checkSelfPermission(mainActivity, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
                 {
-                    mainActivity.dataSaver.SaveDataOnline(fileName, mainActivity.currentDate);
+                    mainActivity.dataSaver.SaveDataOnline(fileName, mainActivity.currentDate, true);
                 }
                 else
                 {

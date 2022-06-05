@@ -38,7 +38,7 @@ public class DataSaver
     private final SharedPreferences sharedPreferences;
     private final MainActivity mainActivity;
 
-    private String currentOnlineSaveFile = "";
+    public String currentOnlineSaveFile = "";
 
     public UserData loadedData = null;
 
@@ -86,7 +86,7 @@ public class DataSaver
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void SaveDataOnline(String fileName, String currentDate) {
+    public void SaveDataOnline(String fileName, String currentDate, Boolean displayToastMessage) {
         currentOnlineSaveFile = fileName;
 
         Gson gson = new Gson();
@@ -104,8 +104,8 @@ public class DataSaver
         InputStream stream = new ByteArrayInputStream(json.getBytes());
 
         Amplify.Storage.uploadInputStream("JapoTimeFiles/UserData/" + fileName + ".json", stream,
-                result -> Toast.makeText(mainActivity, "File uploaded successfully", Toast.LENGTH_SHORT).show(),
-                error -> Log.e("JapoTimeApp", "Upload failed", error)
+                result -> { if(displayToastMessage) Toast.makeText(mainActivity, "File uploaded successfully", Toast.LENGTH_SHORT).show(); },
+                error -> { if(displayToastMessage) Toast.makeText(mainActivity, "Upload failed", Toast.LENGTH_SHORT).show(); }
         );
     }
 
