@@ -6,5 +6,6 @@ public enum ActiveFragment {
     MainPage,
     SettingsPage,
     StudyPage,
-    StatisticsPage
+    StatisticsPage,
+    BackupPage
 }

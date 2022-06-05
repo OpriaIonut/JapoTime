@@ -144,5 +144,14 @@ public class SettingsPageFragment extends Fragment
                 mainActivity.currentActiveFragment = ActiveFragment.CardBrowser;
             }
         });
+
+        Button settingsPageBackupBtn = view.findViewById(R.id.settingsPageBackupBtn);
+        settingsPageBackupBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new BackupPageFragment(mainActivity)).commit();
+                mainActivity.currentActiveFragment = ActiveFragment.BackupPage;
+            }
+        });
     }
 }

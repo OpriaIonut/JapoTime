@@ -175,16 +175,29 @@ public class DailyReview
             }
             else if(!refreshCardsEmptied)
             {
-                //If we finished refresh cards, we need to empty review cards before moving on to new cards
-                if(reviewIterator >= inReviewIDs.size())
-                    reviewIterator = 0;
+                if(inReviewIDs.size() > 0)
+                {
+                    //If we finished refresh cards, we need to empty review cards before moving on to new cards
+                    if (reviewIterator >= inReviewIDs.size())
+                        reviewIterator = 0;
 
-                int pickedIndex = reviewIterator;
-                pickedListForKanji = "Review";
-                pickedListIndex = pickedIndex;
-                reviewIterator++;
+                    int pickedIndex = reviewIterator;
+                    pickedListForKanji = "Review";
+                    pickedListIndex = pickedIndex;
+                    reviewIterator++;
 
-                return kanjiCollection.cardsCollection.get(inReviewIDs.get(pickedIndex));
+                    return kanjiCollection.cardsCollection.get(inReviewIDs.get(pickedIndex));
+                }
+                else
+                {
+                    refreshCardsEmptied = true;
+                    //If we cleared refresh cards & review cards, start adding review cards
+                    int pickedIndex = randomGenerator.nextInt(newCardsIDs.size());
+                    pickedListForKanji = "New";
+                    pickedListIndex = pickedIndex;
+
+                    return kanjiCollection.cardsCollection.get(newCardsIDs.get(pickedIndex));
+                }
             }
             else
             {

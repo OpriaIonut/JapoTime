@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-japotime-dev-145135-authRole",
+      "UnauthRoleArn": "arn:aws:iam::844439336861:role/amplify-japotime-dev-145135-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::844439336861:role/amplify-japotime-dev-145135-authRole",
+      "Region": "eu-central-1",
+      "DeploymentBucketName": "amplify-japotime-dev-145135-deployment",
+      "UnauthRoleName": "amplify-japotime-dev-145135-unauthRole",
+      "StackName": "amplify-japotime-dev-145135",
+      "StackId": "arn:aws:cloudformation:eu-central-1:844439336861:stack/amplify-japotime-dev-145135/afa0d6a0-e3fc-11ec-8b5a-02c97030c160"
+    },
+    "categories": {
+      "auth": {
+        "japotime10466d99": {},
+        "true": {}
+      }
+    }
+  }
+}

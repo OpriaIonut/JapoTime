@@ -164,7 +164,7 @@ public class StudyPageFragment extends Fragment
                 goodBtn.setVisibility(View.VISIBLE);
                 easyBtn.setVisibility(View.VISIBLE);
 
-                if(currentCard.masterScore > 10)
+                if(currentCard.masterScore >= 10)
                 {
                     hardBtn.setText("HARD - " + GetNextDateDisplay(currentCard.masterScore + 1));
                     goodBtn.setText("GOOD - " + GetNextDateDisplay(currentCard.masterScore + 5));

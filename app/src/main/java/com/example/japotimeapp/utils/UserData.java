@@ -9,6 +9,7 @@ import java.util.List;
 
 public class UserData
 {
+    public String onlineSaveDataFile = "";
     public List<KanjiCard> kanjiCards;
     public String lastOpenDate;
 

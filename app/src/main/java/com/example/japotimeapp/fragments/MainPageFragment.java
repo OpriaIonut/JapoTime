@@ -41,7 +41,6 @@ public class MainPageFragment extends Fragment
     {
         super.onViewCreated(view, savedInstanceState);
 
-        TextView totalCards = view.findViewById(R.id.mainPageTotalCards);
         TextView newCards = view.findViewById(R.id.mainPageNewCards);
         TextView refreshCards = view.findViewById(R.id.mainPageRefreshCards);
         TextView reviewCards = view.findViewById(R.id.mainPageReviewCards);
@@ -53,7 +52,6 @@ public class MainPageFragment extends Fragment
         TextView mainPageStudyTime = view.findViewById(R.id.mainPageStudyTime);
         mainPageStudyTime.setText("Time spent studying: " + mainActivity.dailyReview.totalSpentTimeStudying);
 
-        totalCards.setText("" + mainActivity.kanjiCollection.cardsCollection.size());
         newCards.setText("" + mainActivity.dailyReview.GetNewCardsCount());
         refreshCards.setText("" + mainActivity.dailyReview.GetRefreshCardsCount());
         reviewCards.setText("" + mainActivity.dailyReview.GetInReviewCardsCount());

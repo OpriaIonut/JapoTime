@@ -7,6 +7,10 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.amplifyframework.AmplifyException;
+import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
+import com.amplifyframework.core.Amplify;
+import com.amplifyframework.storage.s3.AWSS3StoragePlugin;
 import com.example.japotimeapp.enums.ActiveFragment;
 import com.example.japotimeapp.fragments.LoadingScreenFragment;
 import com.example.japotimeapp.fragments.MainPageFragment;
@@ -32,7 +36,7 @@ import java.util.logging.SimpleFormatter;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String inputUrl = "https://japotime.fra1.digitaloceanspaces.com/Yomichan.txt";
+    public static final String inputUrl = "https://japotimec37c824ce685472c993fb3bd06df91ea145135-dev.s3.eu-central-1.amazonaws.com/public/JapoTimeFiles/Dictionary/Yomichan.txt";
 
     public ActiveFragment currentActiveFragment;
 
@@ -48,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        configureAmplify();
         setContentView(R.layout.activity_main);
 
         Date date = new Date();
@@ -56,6 +61,16 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainer, new LoadingScreenFragment(this)).commit();
         currentActiveFragment = ActiveFragment.LoadingScreen;
         new FetchData().start();
+    }
+
+    private void configureAmplify() {
+        try {
+            Amplify.addPlugin(new AWSCognitoAuthPlugin());
+            Amplify.addPlugin(new AWSS3StoragePlugin());
+            Amplify.configure(getApplicationContext());
+        } catch (AmplifyException e) {
+            e.printStackTrace();
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -100,6 +115,11 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void LoadKanjiDictionary()
+    {
+
     }
 
     //Will be called when the app resumes, or control is given back to this activity (when the popup activities call finish())

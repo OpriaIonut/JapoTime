@@ -199,8 +199,9 @@ public class StatisticsFragment extends Fragment
         PieData pieData = new PieData(pieDataSet);
 
         pieChart.getLegend().setTextColor(Color.WHITE);
-        pieChart.setEntryLabelColor(Color.BLACK);
-        pieChart.setDrawHoleEnabled(false);
+        pieChart.setDrawEntryLabels(false);
+        pieChart.setDrawHoleEnabled(true);
+        pieChart.setHoleColor(Color.TRANSPARENT);
 
         pieChart.setData(pieData);
         pieChart.getDescription().setEnabled(false);
@@ -228,6 +229,8 @@ public class StatisticsFragment extends Fragment
             else
                 reviewedCardsData.add(new Entry(index, 0));
         }
+
+        reviewedCardsData.add(new Entry(historyOffset, mainActivity.dailyReview.cardsStudiedToday));
 
         LineDataSet set1 = new LineDataSet(reviewedCardsData, "Cards Reviewed");
         set1.setDrawCircles(false);
@@ -258,7 +261,7 @@ public class StatisticsFragment extends Fragment
         LocalDate currentDate = LocalDate.parse(mainActivity.currentDate, formatter);;
         LocalDate startDate = currentDate.minusDays(historyOffset);
 
-        for(int index = 0; index <= historyOffset; index++)
+        for(int index = 0; index < historyOffset; index++)
         {
             String dataDate = startDate.plusDays(index).format(formatter);
             if(mainActivity.dataSaver.loadedData.studiedCardsHistory.containsKey(dataDate))
@@ -270,6 +273,10 @@ public class StatisticsFragment extends Fragment
             else
                 reviewTimeData.add(new Entry(index, 0));
         }
+
+        String[] split = mainActivity.dailyReview.totalSpentTimeStudying.split(":");
+        float time = (float) (Integer.parseInt(split[0]) * 60 + Integer.parseInt(split[1]) + Integer.parseInt(split[2]) / 60.0);
+        reviewTimeData.add(new Entry(historyOffset, time));
 
         LineDataSet set2 = new LineDataSet(reviewTimeData, "Review Time Minutes");
         set2.setValueTextColor(Color.WHITE);

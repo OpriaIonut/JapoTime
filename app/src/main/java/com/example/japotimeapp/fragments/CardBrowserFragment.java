@@ -34,7 +34,7 @@ public class CardBrowserFragment extends Fragment
 {
     private final MainActivity mainActivity;
 
-    private int cardsPerFrame = 10;
+    private int cardsPerFrame = 5;
     private int reachedPopulationIndex = 0;
     private ArrayList<KanjiCard> cardsToPopulate;
 
