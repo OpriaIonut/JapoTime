@@ -84,7 +84,7 @@ public class DailyReview
                 refreshCardsEmptied = true;
         }
 
-        if(dataSaver.loadedData == null || dataSaver.loadedData.lastOpenDate == null || !dataSaver.loadedData.lastOpenDate.equals(currentDate))
+        if((dataSaver.loadedData == null || dataSaver.loadedData.lastOpenDate == null || !dataSaver.loadedData.lastOpenDate.equals(currentDate) ) && newCardsIDs.size() == 0 && refreshCardsIDs.size() == 0 && inReviewIDs.size() == 0 && lastCheckIDs.size() == 0)
         {
             cardsStudiedToday = 0;
             GenerateDayReview();
@@ -222,9 +222,6 @@ public class DailyReview
                 pickedListIndex = pickedIndex;
                 reviewIterator++;
 
-                if (inReviewIDs.size() == 1 && refreshCardsIDs.size() == 0 && newCardsIDs.size() == 0)
-                    clearLastCheck = true;
-
                 return kanjiCollection.cardsCollection.get(inReviewIDs.get(pickedIndex));
             }
             else
@@ -232,9 +229,6 @@ public class DailyReview
                 int pickedIndex = randomGenerator.nextInt(lastCheckIDs.size());
                 pickedListForKanji = "LastCheck";
                 pickedListIndex = pickedIndex;
-
-                if(lastCheckIDs.size() == 1 && refreshCardsIDs.size() == 0 && newCardsIDs.size() == 0)
-                    clearLastCheck = false;
 
                 return kanjiCollection.cardsCollection.get(lastCheckIDs.get(pickedIndex));
             }
@@ -298,6 +292,9 @@ public class DailyReview
                             reviewIterator = inReviewIDs.size() - 1;
                     }
 
+                    if (inReviewIDs.size() == 0 && refreshCardsIDs.size() == 0 && newCardsIDs.size() == 0)
+                        clearLastCheck = true;
+
                     if(inReviewIDs.size() == 0)
                         refreshCardsEmptied = true;
                 }
@@ -322,6 +319,9 @@ public class DailyReview
                     lastCheckIDs.remove(pickedListIndex);
                     inReviewIDs.add(removedElem);
                 }
+
+                if(lastCheckIDs.size() == 0 && refreshCardsIDs.size() == 0 && newCardsIDs.size() == 0 && inReviewIDs.size() > 0)
+                    clearLastCheck = false;
                 break;
         }
         cardsStudiedToday++;
@@ -400,6 +400,6 @@ public class DailyReview
             inReviewIDs.subList(inReviewIDs.size() - diff, inReviewIDs.size()).clear();
         }
 
-        GenerateDayReview();
+        //GenerateDayReview();
     }
 }
