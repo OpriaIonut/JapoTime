@@ -95,13 +95,22 @@ public class StatisticsFragment extends Fragment
         int totalCards = mainActivity.kanjiCollection.cardsCollection.size();
         int knownCards = 0;
         int masteredCards = 0;
+        int deletedCards = 0;
         for(int index = 0; index < totalCards; index++)
         {
+            if(mainActivity.kanjiCollection.cardsCollection.get(index).isCardDeleted)
+            {
+                deletedCards++;
+                continue;
+            }
+
             if(mainActivity.kanjiCollection.cardsCollection.get(index).masterScore >= 50)
                 masteredCards++;
             else if(mainActivity.kanjiCollection.cardsCollection.get(index).masterScore > 0)
                 knownCards++;
         }
+        totalCards -= deletedCards;
+
         totalCardsData.add(new BarEntry(3f, totalCards));
         totalCardsData.add(new BarEntry(5f, knownCards));
         totalCardsData.add(new BarEntry(7f, masteredCards));
@@ -142,6 +151,9 @@ public class StatisticsFragment extends Fragment
         int totalCards = mainActivity.kanjiCollection.cardsCollection.size();
         for(int index = 0; index < totalCards; index++)
         {
+            if(mainActivity.kanjiCollection.cardsCollection.get(index).isCardDeleted)
+                continue;
+
             int masterScore = mainActivity.kanjiCollection.cardsCollection.get(index).masterScore;
 
             if(masterScore == 0)

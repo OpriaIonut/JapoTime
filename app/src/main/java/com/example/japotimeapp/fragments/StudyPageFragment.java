@@ -2,6 +2,8 @@ package com.example.japotimeapp.fragments;
 
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -131,6 +133,49 @@ public class StudyPageFragment extends Fragment
                 mainActivity.dailyReview.CalculateTimePassed();
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new MainPageFragment(mainActivity)).commit();
                 mainActivity.currentActiveFragment = ActiveFragment.MainPage;
+            }
+        });
+
+        Button studyPageDeleteBtn = view.findViewById(R.id.studyPageDeleteBtn);
+        studyPageDeleteBtn.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
+                builder.setTitle(R.string.app_name);
+                builder.setMessage("Are you sure you want to delete this card?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.O)
+                    public void onClick(DialogInterface dialog, int id) {
+                        currentCard.isCardDeleted = true;
+
+                        switch(mainActivity.dailyReview.pickedListForKanji)
+                        {
+                            case "Refresh":
+                                mainActivity.dailyReview.refreshCardsIDs.remove(mainActivity.dailyReview.pickedListIndex);
+                                break;
+                            case "Review":
+                                mainActivity.dailyReview.inReviewIDs.remove(mainActivity.dailyReview.pickedListIndex);
+                                break;
+                            case "New":
+                                mainActivity.dailyReview.newCardsIDs.remove(mainActivity.dailyReview.pickedListIndex);
+                                break;
+                            case "LastCheck":
+                                mainActivity.dailyReview.lastCheckIDs.remove(mainActivity.dailyReview.pickedListIndex);
+                                break;
+                        }
+
+                        PickNextCard();
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
             }
         });
 

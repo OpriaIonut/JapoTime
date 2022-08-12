@@ -14,6 +14,7 @@ public class KanjiCard
     public String lastReviewDate;
     public int nextReviewDays;
     public int masterScore;
+    public boolean isCardDeleted = false;
 
     public KanjiCard()
     {

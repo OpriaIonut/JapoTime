@@ -41,8 +41,8 @@ public class DailyReview
     private Random randomGenerator;
 
     private Boolean refreshCardsEmptied = false;
-    private String pickedListForKanji = "";
-    private int pickedListIndex = 0;
+    public String pickedListForKanji = "";
+    public int pickedListIndex = 0;
 
     private int reviewIterator = 0;
 
@@ -110,6 +110,9 @@ public class DailyReview
         {
             KanjiCard currentCard = kanjiCollection.cardsCollection.get(index);
 
+            if(currentCard.isCardDeleted)
+                continue;
+
             //If it is a card that hasn't been learned, then add it to the list
             if(currentCard.masterScore == 0 && !newCardsIDs.contains(index))
             {
@@ -162,7 +165,7 @@ public class DailyReview
     public KanjiCard GetNextStudyCard()
     {
         //If we still have space for items in review
-        if(inReviewIDs.size() < inReviewLimit && newCardsIDs.size() > 0)
+        if(inReviewIDs.size() < inReviewLimit && (newCardsIDs.size() > 0 || (newCardsIDs.size() == 0 && refreshCardsIDs.size() > 0)))
         {
             //Check to see if we reviewed all refresh items
             if(refreshCardsIDs.size() > 0)
@@ -318,6 +321,9 @@ public class DailyReview
                     removedElem = lastCheckIDs.get(pickedListIndex);
                     lastCheckIDs.remove(pickedListIndex);
                     inReviewIDs.add(removedElem);
+
+                    if(inReviewIDs.size() > inReviewLimit)
+                        clearLastCheck = false;
                 }
 
                 if(lastCheckIDs.size() == 0 && refreshCardsIDs.size() == 0 && newCardsIDs.size() == 0 && inReviewIDs.size() > 0)
